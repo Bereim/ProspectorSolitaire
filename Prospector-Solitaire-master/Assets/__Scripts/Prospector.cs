@@ -90,27 +90,24 @@ public class Prospector : MonoBehaviour
 
     public List<CardProspector> drawPile;
 
-    void Start()
-    {
+    void Start() {
         Scoreboard.S.score = score;
 
         deck = GetComponent<Deck>(); // Get the Deck
         deck.InitDeck(deckXML.text); // Pass DeckXML to it
-        Deck.Shuffle(ref deck.cards);    // This shuffles the deck
-                                         // The ref keyword passes a reference to deck.cards, which allows
-                                         //   deck.cards to be modified by Deck.Shuffle()
-        layout = GetComponent<Layout>();   // Get the Layout
+        Deck.Shuffle(ref deck.cards);    // This shuffles the deck, The ref keyword passes a reference to deck.cards, which allows deck.cards to be modified by Deck.Shuffle()
+
+		layout = GetComponent<Layout>();   // Get the Layout
         layout.ReadLayout(layoutXML.text); // Pass LayoutXML to it
 
         drawPile = ConvertListCardsToListCardProspectors(deck.cards);
         LayoutGame();
     }
-    List<CardProspector> ConvertListCardsToListCardProspectors(List<Card> lCD)
-    {
+
+    List<CardProspector> ConvertListCardsToListCardProspectors(List<Card> lCD) {
         List<CardProspector> lCP = new List<CardProspector>();
         CardProspector tCP;
-        foreach (Card tCD in lCD)
-        {
+        foreach (Card tCD in lCD) {
             tCP = tCD as CardProspector;                                    // 1
             lCP.Add(tCP);
         }
@@ -142,11 +139,9 @@ public class Prospector : MonoBehaviour
     }
 
     // LayoutGame() positions the initial tableau of cards, a.k.a. the "mine"
-    void LayoutGame()
-    {
+    void LayoutGame() {
         // Create an empty GameObject to serve as an anchor for the tableau //1
-        if (layoutAnchor == null)
-        {
+        if (layoutAnchor == null) {
             GameObject tGO = new GameObject("_LayoutAnchor");
             // ^ Create an empty GameObject named _LayoutAnchor in the Hierarchy
             layoutAnchor = tGO.transform;                 // Grab its Transform
@@ -154,8 +149,7 @@ public class Prospector : MonoBehaviour
         }
         CardProspector cp;
         // Follow the layout
-        foreach (SlotDef tSD in layout.slotDefs)
-        {
+        foreach (SlotDef tSD in layout.slotDefs) {
             // ^ Iterate through all the SlotDefs in the layout.slotDefs as tSD
             cp = Draw(); // Pull a card from the top (beginning) of the drawPile
             cp.faceUp = tSD.faceUp;    // Set its faceUp to the value in SlotDef
@@ -253,8 +247,9 @@ public class Prospector : MonoBehaviour
 
         cd.SetSortOrder(-100 + discardPile.Count);
     }
-    // Make cd the new target card
-    void MoveToTarget(CardProspector cd)
+	// Make cd the new target card
+
+	void MoveToTarget(CardProspector cd)
     {
         // If there is currently a target card, move it to discardPile
         if (target != null) MoveToDiscard(target);
@@ -271,8 +266,9 @@ public class Prospector : MonoBehaviour
         cd.SetSortingLayerName(layout.discardPile.layerName);
         cd.SetSortOrder(0);
     }
-    // Arranges all the cards of the drawPile to show how many are left
-    void UpdateDrawPile()
+	// Arranges all the cards of the drawPile to show how many are left
+
+	void UpdateDrawPile()
     {
         CardProspector cd;
         // Go through all the cards of the drawPile
@@ -358,7 +354,8 @@ public class Prospector : MonoBehaviour
         // Call GameOver with a loss
         GameOver(false);
     }
-    // Called when the game is over. Simple for now, but expandable
+    
+	// Called when the game is over. Simple for now, but expandable
     void GameOver(bool won)
     {
         if (won)

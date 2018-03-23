@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
-public class Deck : MonoBehaviour
-{
+public class Deck : MonoBehaviour {
+	public bool startFaceUp = false;
+
     // Suits
     public Sprite suitClub;
     public Sprite suitDiamond;
@@ -30,11 +30,9 @@ public class Deck : MonoBehaviour
     public Dictionary<string, Sprite> dictSuits;
 
     // InitDeck is called by Prospector when it is ready
-    public void InitDeck(string deckXMLText)
-    {
+    public void InitDeck(string deckXMLText) {
         // This creates an anchor for all the Card GameObjects in the Hierarchy
-        if (GameObject.Find("_Deck") == null)
-        {
+        if (GameObject.Find("_Deck") == null) {
             GameObject anchorGO = new GameObject("_Deck");
             deckAnchor = anchorGO.transform;
         }
@@ -191,6 +189,7 @@ public class Deck : MonoBehaviour
 
 		AddPips(card);
 		AddFace(card);
+		AddBack(card);
 
 		AddDecorators(card);
 
@@ -281,25 +280,21 @@ public class Deck : MonoBehaviour
 		return (null);
 	}
 
-	/*
-        // Add Card Back
+	private void AddBack(Card card) {
+		// Add Card Back
         // The Card_Back will be able to cover everything else on the Card
         _tGO = Instantiate(prefabSprite) as GameObject;
         _tSR = _tGO.GetComponent<SpriteRenderer>();
-        _SR.sprite = cardBack;
-        _tGO.transform.parent = card.transform;
-        _GO.transform.localPosition = Vector3.zero;
+        _tSR.sprite = cardBack;
+        _tGO.transform.SetParent(card.transform);
+        _tGO.transform.localPosition = Vector3.zero;
         // This is a higher sortingOrder than anything else
         _tSR.sortingOrder = 2;
         _tGO.name = "back";
         card.back = _tGO;
         // Default to face-up
-        card.faceUp = false; // Use the property faceUp of Card
-
-        // Add the card to the deck
-        cards.Add(card);
-        
-    }*/
+        card.faceUp = startFaceUp; // Use the property faceUp of Card
+	}
 
     // Shuffle the Cards in Deck.cards
     static public void Shuffle(ref List<Card> oCards) {
