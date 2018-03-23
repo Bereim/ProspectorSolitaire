@@ -189,6 +189,9 @@ public class Deck : MonoBehaviour
         // Pull the CardDefinition for this card
         card.def = GetCardDefinitionByRank(card.rank);
 
+		AddPips(card);
+		AddFace(card);
+
 		AddDecorators(card);
 
 		return card;
@@ -243,18 +246,53 @@ public class Deck : MonoBehaviour
 		}
 	}
 
+	private void AddPips(Card card) {
+		foreach(Decorator pip in card.def.pips) {
+			_tGO = Instantiate(prefabSprite) as GameObject;
+			_tGO.transform.SetParent(card.transform);
+			_tGO.transform.localPosition = pip.loc;
+			if (pip.flip) _tGO.transform.rotation = Quaternion.Euler(0, 0, 180);
+			if (pip.scale != 1) _tGO.transform.localScale = Vector3.one * pip.scale;
+			_tGO.name = "pip";
+			_tSR = _tGO.GetComponent<SpriteRenderer>();
+			_tSR.sprite = dictSuits[card.suit];
+			_tSR.sortingOrder = 1;
+			card.pipGOs.Add(_tGO);
+		}
+	}
+
+	private void AddFace(Card card) {
+		if (card.def.face == "") return;
+
+		_tGO = Instantiate(prefabSprite) as GameObject;
+		_tSR = _tGO.GetComponent<SpriteRenderer>();
+		_tSp = GetFace(card.def.face + card.suit);
+		_tSR.sprite = _tSp;
+		_tSR.sortingOrder = 1;
+		_tGO.transform.SetParent(card.transform);
+		_tGO.transform.localPosition = Vector3.zero;
+		_tGO.name = "face";
+	}
+
+	private Sprite GetFace(string faceS) {
+		foreach (Sprite _tSP in faceSprites) {
+			if (_tSP.name == faceS) return (_tSP);
+		}
+		return (null);
+	}
+
 	/*
         // Add Card Back
         // The Card_Back will be able to cover everything else on the Card
-        tGO = Instantiate(prefabSprite) as GameObject;
-        tSR = tGO.GetComponent<SpriteRenderer>();
-        tSR.sprite = cardBack;
-        tGO.transform.parent = card.transform;
-        tGO.transform.localPosition = Vector3.zero;
+        _tGO = Instantiate(prefabSprite) as GameObject;
+        _tSR = _tGO.GetComponent<SpriteRenderer>();
+        _SR.sprite = cardBack;
+        _tGO.transform.parent = card.transform;
+        _GO.transform.localPosition = Vector3.zero;
         // This is a higher sortingOrder than anything else
-        tSR.sortingOrder = 2;
-        tGO.name = "back";
-        card.back = tGO;
+        _tSR.sortingOrder = 2;
+        _tGO.name = "back";
+        card.back = _tGO;
         // Default to face-up
         card.faceUp = false; // Use the property faceUp of Card
 
@@ -264,15 +302,13 @@ public class Deck : MonoBehaviour
     }*/
 
     // Shuffle the Cards in Deck.cards
-    static public void Shuffle(ref List<Card> oCards)
-    {                     // 1
+    static public void Shuffle(ref List<Card> oCards) {
         // Create a temporary List to hold the new shuffle order
         List<Card> tCards = new List<Card>();
         int ndx; // This will hold the index of the card to be moved
         tCards = new List<Card>(); // Initialize the temporary List
         // Repeat as long as there are cards in the original List
-        while (oCards.Count > 0)
-        {
+        while (oCards.Count > 0) {
             // Pick the index of a random card
             ndx = Random.Range(0, oCards.Count);
             // Add that card to the temporary List
@@ -282,7 +318,6 @@ public class Deck : MonoBehaviour
         }
         // Replace the original List with the temporary List
         oCards = tCards;
-        // Because oCards is a reference variable, the original that was
-        //   passed in is changed as well.
+        // Because oCards is a reference variable, the original that was passed in is changed as well.
     }
 }
